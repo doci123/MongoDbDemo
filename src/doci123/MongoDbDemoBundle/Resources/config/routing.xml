@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <!-- Demo routes -->
+    <route id="demo_index" path="/demo">
+        <default key="_controller">MongoDbDemoBundle:Demo:index</default>
+    </route>
+    <route id="demo_add" path="/demo/add">
+        <default key="_controller">MongoDbDemoBundle:Demo:add</default>
+    </route>
+    <route id="demo_show" path="/demo/{id}">
+        <default key="_controller">MongoDbDemoBundle:Demo:show</default>
+    </route>
+    <route id="demo_update" path="/demo/{id}/update">
+        <default key="_controller">MongoDbDemoBundle:Demo:update</default>
+    </route>
+    <route id="demo_delete" path="/demo/{id}/delete">
+        <default key="_controller">MongoDbDemoBundle:Demo:delete</default>
+    </route>
+
+</routes>
