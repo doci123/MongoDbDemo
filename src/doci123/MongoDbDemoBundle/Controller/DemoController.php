@@ -22,25 +22,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use doci123\MongoDbDemoBundle\Document\DemoDocument;
 
+use Doctrine\ODM\MongoDB\Repository;
+
+
 class DemoController extends Controller
 {
     public function indexAction()
     {
         $product = $this->get('doctrine_mongodb')
             ->getRepository('MongoDbDemoBundle:DemoDocument')
-            ->findAll();
+            ->findAll(5);
 
-        $responseValue = ['No items exists, please create item.'];
-        // Product is Array of BikeModel object,
-        if(count($product) > 0)
-        {
-            $responseValue = [];
-            foreach ($product as $item)
-            {
-                $responseValue[]=['id' => $item->getId(),'name' => $item->getName()];
+        if(!$product)
+            $responseValue = ['No items exists, please create item.'];
+        else
+            $responseValue = $product->toArray();
 
-            }
-        }
         return new JsonResponse( $responseValue, 200,['Content-Type'=>'application/json; charset=UTF-8;']);
     }
 
@@ -52,6 +49,9 @@ class DemoController extends Controller
         $product = new DemoDocument();
         $product->setName($name ? $name :'Item  ' . random_int(10,500));
         $product->setPrice($price ? $price : '9.99');
+
+        $customAttributes = [ 'color' => 'red', 'weight' => 1.7, /* ..... */ ];
+        $product->setAttributes($customAttributes);
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $dm->persist($product);
@@ -131,5 +131,4 @@ class DemoController extends Controller
             ['Content-Type'=>'application/json; charset=UTF-8;']
         );
     }
-
 }

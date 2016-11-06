@@ -1,11 +1,16 @@
 <?php
-
+/**
+ *
+ *
+ * Mapping field type
+ * http://docs.doctrine-project.org/projects/doctrine-mongodb-odm/en/latest/reference/basic-mapping.html
+ */
 namespace doci123\MongoDbDemoBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
 /**
- * @MongoDB\Document
+ * @MongoDB\Document(repositoryClass="doci123\MongoDbDemoBundle\Repository\DemoRepository")
  */
 class DemoDocument
 {
@@ -30,6 +35,11 @@ class DemoDocument
      */
     protected $price;
 
+    /**
+     * Schema-less dynamic properties here
+     * @MongoDB\Field(type="hash")
+     */
+    public $attributes;
 
     /**
      * Get id
@@ -83,5 +93,21 @@ class DemoDocument
     public function getPrice()
     {
         return $this->price;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @param mixed $attributes
+     */
+    public function setAttributes($attributes)
+    {
+        $this->attributes = $attributes;
     }
 }
