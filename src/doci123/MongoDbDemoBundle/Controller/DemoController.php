@@ -21,7 +21,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use doci123\MongoDbDemoBundle\Document\DemoDocument;
-
 use Doctrine\ODM\MongoDB\Repository;
 
 
@@ -131,4 +130,60 @@ class DemoController extends Controller
             ['Content-Type'=>'application/json; charset=UTF-8;']
         );
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function searchAction(Request $request)
+    {
+        /**
+         * @var \Doctrine\ODM\MongoDB\Query\Builder $qb
+         */
+        $qb = $this->get('doctrine_mongodb')
+            ->getManager()
+            ->createQueryBuilder('MongoDbDemoBundle:DemoDocument');
+
+        // Select fields only
+        // $qb->select('name', 'attributes', 'price');
+        $qb->select('name', 'attributes.color'); // Only name and in attributes.color
+
+        // Search
+        $patternName = $request->request->get('name');
+        if(!$patternName)
+            $patternName = $request->query->get('name');
+
+        if(!empty($patternName)) {
+
+            // Fulltext
+            //$qb->field('name')->equals($request->request->get('name'));
+
+            // Reg / Like
+            //$qb->addOr($qb->expr()->field('name')->equals(new \MongoRegex('/.*'. $patternName .'.*/i')));
+
+            // Or
+            $regPattern = new \MongoRegex('/.*'. $patternName .'.*/i');
+            $qb->addOr($qb->expr()->field('name')->equals($regPattern));
+            $qb->addOr($qb->expr()->field('attributes.color')->equals($regPattern));
+        }
+
+        /**
+         * @var \Doctrine\ODM\MongoDB\Cursor $result
+         */
+        $result = $qb
+            ->limit(5)
+            ->hydrate(false)
+            ->sort('name', 'ASC')
+            ->getQuery()
+            ->execute();
+
+        $response = array(
+            'total' => $result->count(),
+            'result' => $result->toArray(false)
+        );
+
+        return new JsonResponse($response, 200,['Content-Type'=>'application/json; charset=UTF-8;']);
+    }
+
+
 }

@@ -11,7 +11,7 @@
     <route id="demo_add" path="/demo/add">
         <default key="_controller">MongoDbDemoBundle:Demo:add</default>
     </route>
-    <route id="demo_show" path="/demo/{id}">
+    <route id="demo_show" path="/demo/{id}/show">
         <default key="_controller">MongoDbDemoBundle:Demo:show</default>
     </route>
     <route id="demo_update" path="/demo/{id}/update">
@@ -19,6 +19,10 @@
     </route>
     <route id="demo_delete" path="/demo/{id}/delete">
         <default key="_controller">MongoDbDemoBundle:Demo:delete</default>
+    </route>
+
+    <route id="demo_search" path="/demo/search">
+        <default key="_controller">MongoDbDemoBundle:Demo:search</default>
     </route>
 
 </routes>

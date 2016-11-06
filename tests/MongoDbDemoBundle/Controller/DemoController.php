@@ -66,7 +66,7 @@ class DemoControllerTest extends WebTestCase
     {
         $item = self::$item;
 
-        $path =  '/demo/'. $item['id'];
+        $path =  '/demo/'. $item['id'] . '/show';
 
         $client = static::createClient();
         $crawler = $client->request('GET', $path);
@@ -81,6 +81,26 @@ class DemoControllerTest extends WebTestCase
         $this->assertArrayHasKey('id', $jsonAnswer);
         $this->assertArrayHasKey('name', $jsonAnswer);
         $this->assertContains($item['name'],$jsonAnswer['name']);
+    }
+
+    public function testSearch()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/demo/search?name='.  self::$item['name'] );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $response = $client->getResponse();
+        $jsonAnswer = json_decode($response->getContent(), TRUE);
+        $this->assertArrayHasKey('result', $jsonAnswer);
+        $this->assertArrayHasKey(0, $jsonAnswer['result']);
+
+        // Get First result
+        $firstResult = $jsonAnswer['result'][0];
+        $this->assertArrayHasKey('attributes', $firstResult);
+        $this->assertArrayHasKey('name', $firstResult);
+
+        $this->assertContains(self::$item['name'],$firstResult['name']);
     }
 
     public function testDelete()
